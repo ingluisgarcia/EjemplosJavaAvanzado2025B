@@ -21,6 +21,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
         if(profile != 1){
             //btnPrueba.setEnabled(false);
             btnPrueba.setVisible(false);
+            menuEdit.setEnabled(false);
         }
     }
 
@@ -35,11 +36,15 @@ public class FrmPrincipal extends javax.swing.JFrame {
 
         lbUser = new javax.swing.JLabel();
         btnPrueba = new javax.swing.JButton();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        menuLogout = new javax.swing.JMenuItem();
+        menuEdit = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosed(java.awt.event.WindowEvent evt) {
-                formWindowClosed(evt);
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
             }
         });
 
@@ -51,6 +56,23 @@ public class FrmPrincipal extends javax.swing.JFrame {
                 btnPruebaActionPerformed(evt);
             }
         });
+
+        jMenu1.setText("File");
+
+        menuLogout.setText("Cerrar Sesion");
+        menuLogout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuLogoutActionPerformed(evt);
+            }
+        });
+        jMenu1.add(menuLogout);
+
+        jMenuBar1.add(jMenu1);
+
+        menuEdit.setText("Edit");
+        jMenuBar1.add(menuEdit);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -73,24 +95,32 @@ public class FrmPrincipal extends javax.swing.JFrame {
                 .addComponent(lbUser)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnPrueba)
-                .addContainerGap(122, Short.MAX_VALUE))
+                .addContainerGap(99, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
-        // TODO add your handling code here:
-        FrmLogin login = new FrmLogin();
-        login.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_formWindowClosed
 
     private void btnPruebaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPruebaActionPerformed
         // TODO add your handling code here:
         JOptionPane.showMessageDialog(rootPane, "YAMETE KUDASAI!!");
     }//GEN-LAST:event_btnPruebaActionPerformed
 
+    private void menuLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuLogoutActionPerformed
+        // TODO add your handling code here:
+        cerrarSesion();
+    }//GEN-LAST:event_menuLogoutActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+        cerrarSesion();
+    }//GEN-LAST:event_formWindowClosing
+
+    public void cerrarSesion(){
+        new FrmLogin().setVisible(true);
+        this.dispose();
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -128,6 +158,10 @@ public class FrmPrincipal extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnPrueba;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JLabel lbUser;
+    private javax.swing.JMenu menuEdit;
+    private javax.swing.JMenuItem menuLogout;
     // End of variables declaration//GEN-END:variables
 }
