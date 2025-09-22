@@ -2,8 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package ejemplologin;
+package FormulariosPrincipales;
 
+import FormulariosInternos.JiFrmPeaje;
+import FormulariosInternos.JiFrmPerfil;
 import javax.swing.JOptionPane;
 
 /**
@@ -15,12 +17,13 @@ public class FrmPrincipal extends javax.swing.JFrame {
     /**
      * Creates new form FrmPrincipal
      */
+    String username;
+    int profile;
     public FrmPrincipal(int id, int profile, String username) {
         initComponents();
-        lbUser.setText(username);
+       this.username = username;
+       this.profile = profile;
         if(profile != 1){
-            //btnPrueba.setEnabled(false);
-            btnPrueba.setVisible(false);
             menuEdit.setEnabled(false);
         }
     }
@@ -34,10 +37,11 @@ public class FrmPrincipal extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        lbUser = new javax.swing.JLabel();
-        btnPrueba = new javax.swing.JButton();
+        principalDesktop = new javax.swing.JDesktopPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        menuPerfil = new javax.swing.JMenuItem();
+        menuPeaje = new javax.swing.JMenuItem();
         menuLogout = new javax.swing.JMenuItem();
         menuEdit = new javax.swing.JMenu();
 
@@ -48,16 +52,34 @@ public class FrmPrincipal extends javax.swing.JFrame {
             }
         });
 
-        lbUser.setText("jLabel1");
-
-        btnPrueba.setText("Touch me! <3");
-        btnPrueba.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPruebaActionPerformed(evt);
-            }
-        });
+        javax.swing.GroupLayout principalDesktopLayout = new javax.swing.GroupLayout(principalDesktop);
+        principalDesktop.setLayout(principalDesktopLayout);
+        principalDesktopLayout.setHorizontalGroup(
+            principalDesktopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 935, Short.MAX_VALUE)
+        );
+        principalDesktopLayout.setVerticalGroup(
+            principalDesktopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 595, Short.MAX_VALUE)
+        );
 
         jMenu1.setText("File");
+
+        menuPerfil.setText("Perfil");
+        menuPerfil.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuPerfilActionPerformed(evt);
+            }
+        });
+        jMenu1.add(menuPerfil);
+
+        menuPeaje.setText("Modulo Peaje");
+        menuPeaje.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuPeajeActionPerformed(evt);
+            }
+        });
+        jMenu1.add(menuPeaje);
 
         menuLogout.setText("Cerrar Sesion");
         menuLogout.addActionListener(new java.awt.event.ActionListener() {
@@ -78,33 +100,15 @@ public class FrmPrincipal extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(174, 174, 174)
-                        .addComponent(lbUser))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(146, 146, 146)
-                        .addComponent(btnPrueba)))
-                .addContainerGap(150, Short.MAX_VALUE))
+            .addComponent(principalDesktop)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(127, 127, 127)
-                .addComponent(lbUser)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnPrueba)
-                .addContainerGap(99, Short.MAX_VALUE))
+            .addComponent(principalDesktop)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnPruebaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPruebaActionPerformed
-        // TODO add your handling code here:
-        JOptionPane.showMessageDialog(rootPane, "YAMETE KUDASAI!!");
-    }//GEN-LAST:event_btnPruebaActionPerformed
 
     private void menuLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuLogoutActionPerformed
         // TODO add your handling code here:
@@ -115,6 +119,20 @@ public class FrmPrincipal extends javax.swing.JFrame {
         // TODO add your handling code here:
         cerrarSesion();
     }//GEN-LAST:event_formWindowClosing
+
+    private void menuPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuPerfilActionPerformed
+        // TODO add your handling code here:
+        JiFrmPerfil perfil = new JiFrmPerfil(username);
+        principalDesktop.add(perfil);
+        perfil.show();
+    }//GEN-LAST:event_menuPerfilActionPerformed
+
+    private void menuPeajeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuPeajeActionPerformed
+        // TODO add your handling code here:
+        JiFrmPeaje peaje = new JiFrmPeaje(profile);
+        principalDesktop.add(peaje);
+        peaje.show();
+    }//GEN-LAST:event_menuPeajeActionPerformed
 
     public void cerrarSesion(){
         new FrmLogin().setVisible(true);
@@ -157,11 +175,12 @@ public class FrmPrincipal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnPrueba;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JLabel lbUser;
     private javax.swing.JMenu menuEdit;
     private javax.swing.JMenuItem menuLogout;
+    private javax.swing.JMenuItem menuPeaje;
+    private javax.swing.JMenuItem menuPerfil;
+    private javax.swing.JDesktopPane principalDesktop;
     // End of variables declaration//GEN-END:variables
 }
