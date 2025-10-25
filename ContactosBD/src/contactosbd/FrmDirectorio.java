@@ -26,12 +26,19 @@ public class FrmDirectorio extends javax.swing.JFrame {
      */
      InfoConexion conexion;
      ArrayList<TipoContacto> listaTipoContacto;
+     ArrayList<Directorio> listaContactos;
+     boolean bandera = false;
+     int contactoSeleccionado;
     public FrmDirectorio() {
         initComponents();
         conexion = new InfoConexion();
         listaTipoContacto = new ArrayList();
+        listaContactos= new ArrayList();
         txtNombre.setText("");
         txtTelefono.setText("");
+        btnGuardar.setEnabled(!bandera);
+        btnActualizar.setEnabled(bandera);
+        
         llenarCombo();
         mostrarInfo();
     }
@@ -69,13 +76,44 @@ public class FrmDirectorio extends javax.swing.JFrame {
             
             pstm.executeQuery();
             
-            JOptionPane.showMessageDialog(rootPane, "DatoGuardado");
+            JOptionPane.showMessageDialog(rootPane, "Dato Guardado");
             mostrarInfo();
             
         }catch(SQLException e){
             JOptionPane.showMessageDialog(rootPane, e.toString());
         }
     }
+    
+    public void actualizar(){
+        try(Connection con = DriverManager.getConnection(conexion.getUrl(),
+                conexion.getUsername(), conexion.getPassword())){
+            int posCombo = comboTipoContacto.getSelectedIndex()-1;
+            PreparedStatement pstm = con.prepareCall("call actualizarContacto(?,?,?,?)");
+            pstm.setInt(1,contactoSeleccionado);
+            pstm.setInt(2, listaTipoContacto.get(posCombo).getId());
+            pstm.setString(3,txtNombre.getText());
+            pstm.setString(4,txtTelefono.getText());
+            
+            
+            int rowAffected= pstm.executeUpdate();
+            
+            if(rowAffected>0){
+                JOptionPane.showMessageDialog(rootPane, "Dato Actualizado");
+                bandera = false;
+            }else{
+                JOptionPane.showMessageDialog(rootPane, "No se pudo realizar la actualizacion");
+            }
+            
+            
+            
+            
+            mostrarInfo();
+            
+        }catch(SQLException e){
+            JOptionPane.showMessageDialog(rootPane, e.toString());
+        }
+    }
+    
     
     public void filtar(){
         try(Connection con = DriverManager.getConnection(conexion.getUrl(),
@@ -113,6 +151,7 @@ public class FrmDirectorio extends javax.swing.JFrame {
                 conexion.getUsername(), conexion.getPassword())){
             
             DefaultTableModel modelo = new DefaultTableModel();
+            listaContactos.clear();
             
             Statement stm = con.createStatement();
             
@@ -125,6 +164,13 @@ public class FrmDirectorio extends javax.swing.JFrame {
             }
             
             while(rs.next()){
+                //Para llenar ArrayList
+                int id = rs.getInt("id");
+                String nombre = rs.getString("Nombre");
+                String telefono = rs.getString("Telefono");
+                String tipoContacto = rs.getString("Tipo");
+                listaContactos.add(new Directorio(id, nombre, telefono, tipoContacto));                
+                //Para colocar en table
                 Object[] filas = new Object[rsmt.getColumnCount()];
                 for(int i = 1; i<=rsmt.getColumnCount(); i++){
                     filas[i-1] = rs.getObject(i);
@@ -132,6 +178,10 @@ public class FrmDirectorio extends javax.swing.JFrame {
                 modelo.addRow(filas);
             }
             tableContactos.setModel(modelo);
+            for (int i = 0; i < listaContactos.size(); i++) {
+                System.out.println(listaContactos.get(i).getNombre());
+                
+            }
             
             
     }catch(SQLException e){
@@ -161,7 +211,8 @@ public class FrmDirectorio extends javax.swing.JFrame {
         btnGuardar = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tableContactos = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
+        btnFiltrar = new javax.swing.JButton();
+        btnActualizar = new javax.swing.JButton();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -208,12 +259,24 @@ public class FrmDirectorio extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tableContactos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableContactosMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(tableContactos);
 
-        jButton1.setText("Filtrar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnFiltrar.setText("Filtrar");
+        btnFiltrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnFiltrarActionPerformed(evt);
+            }
+        });
+
+        btnActualizar.setText("Actualizar");
+        btnActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnActualizarActionPerformed(evt);
             }
         });
 
@@ -238,8 +301,10 @@ public class FrmDirectorio extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(btnGuardar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1)))
-                .addContainerGap(35, Short.MAX_VALUE))
+                        .addComponent(btnFiltrar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnActualizar)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(jScrollPane2)
         );
         layout.setVerticalGroup(
@@ -256,7 +321,8 @@ public class FrmDirectorio extends javax.swing.JFrame {
                     .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(comboTipoContacto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnGuardar)
-                    .addComponent(jButton1))
+                    .addComponent(btnFiltrar)
+                    .addComponent(btnActualizar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE))
         );
@@ -275,14 +341,46 @@ public class FrmDirectorio extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnGuardarActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnFiltrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFiltrarActionPerformed
         // TODO add your handling code here:
         if(comboTipoContacto.getSelectedIndex()>0){
             filtar();
         }else{
             mostrarInfo();
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnFiltrarActionPerformed
+
+    private void tableContactosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableContactosMouseClicked
+        // TODO add your handling code here:
+        int filaSeleccionada;
+        filaSeleccionada = tableContactos.rowAtPoint(evt.getPoint());
+        contactoSeleccionado = listaContactos.get(filaSeleccionada).getId();
+        txtNombre.setText(listaContactos.get(filaSeleccionada).getNombre());
+        txtTelefono.setText(listaContactos.get(filaSeleccionada).getTelefono());
+        for (int i = 0; i < listaTipoContacto.size(); i++) {
+            if(listaTipoContacto.get(i).getDescripcion().equals(listaContactos.get(filaSeleccionada).getTipoContacto())){
+                comboTipoContacto.setSelectedIndex(i+1);
+            }
+            
+        }
+        bandera = true;
+        btnGuardar.setEnabled(!bandera);
+        btnActualizar.setEnabled(bandera);
+    }//GEN-LAST:event_tableContactosMouseClicked
+
+    private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
+        // TODO add your handling code here:
+        if(!txtNombre.getText().isEmpty()
+                && !txtTelefono.getText().isEmpty()
+                && comboTipoContacto.getSelectedIndex()>0){
+            //guardar();
+            actualizar();
+            btnGuardar.setEnabled(!bandera);
+            btnActualizar.setEnabled(bandera);
+        }else{
+            JOptionPane.showMessageDialog(rootPane, "Faltan datos");
+        }
+    }//GEN-LAST:event_btnActualizarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -320,9 +418,10 @@ public class FrmDirectorio extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnActualizar;
+    private javax.swing.JButton btnFiltrar;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JComboBox<String> comboTipoContacto;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

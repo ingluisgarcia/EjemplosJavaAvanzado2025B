@@ -3,8 +3,8 @@ package contactosbd;
 public class InfoConexion {
 
     String url = "jdbc:mysql://localhost/directorio";
-    String username="cbn";
-    String password="cbn2016";
+    String username="root";
+    String password="drakhuntress1210";
 
     public InfoConexion() {
     }
